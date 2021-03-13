@@ -20,17 +20,18 @@ public class TelegramBot extends TelegramLongPollingBot {
     private String botToken;
     @Value("${bot.command}")
     private String command;
+    @Value("${bot.commandName}")
+    private String commandName;
 
     @Override
     public void onUpdateReceived(Update update) {
         String message = getMessage();
+        long chat_id = update.getMessage().getChatId();
         if (update.getMessage() != null && update.getMessage().hasText()) {
-            long chat_id = update.getMessage().getChatId();
-
-            try {
-                execute(new SendMessage().setChatId(chat_id).setText(message));
-            } catch (TelegramApiException e) {
-                e.printStackTrace();
+            if (update.getMessage().getText().equals(commandName)) {
+                sendMessage(chat_id, message);
+            } else {
+                sendMessage(chat_id, "wrong command!");
             }
         }
     }
@@ -44,6 +45,7 @@ public class TelegramBot extends TelegramLongPollingBot {
     public String getBotToken() {
         return botToken;
     }
+
 
     private String getMessage() {
         StringBuilder output = new StringBuilder();
@@ -60,5 +62,16 @@ public class TelegramBot extends TelegramLongPollingBot {
             e.printStackTrace();
         }
         return output.toString();
+    }
+
+    private void sendMessage(long chatId, String text) {
+        SendMessage message = new SendMessage()
+                .setChatId(chatId)
+                .setText(text);
+        try {
+            execute(message);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
     }
 }
