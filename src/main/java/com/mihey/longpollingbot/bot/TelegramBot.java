@@ -5,11 +5,16 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class TelegramBot extends TelegramLongPollingBot {
@@ -22,6 +27,12 @@ public class TelegramBot extends TelegramLongPollingBot {
     private String command;
     @Value("${bot.commandName}")
     private String commandName;
+    @Value("${bot.button1}")
+    private String button1;
+    @Value("${bot.button2}")
+    private String button2;
+    @Value("${bot.button3}")
+    private String button3;
 
     @Override
     public void onUpdateReceived(Update update) {
@@ -65,13 +76,33 @@ public class TelegramBot extends TelegramLongPollingBot {
     }
 
     private void sendMessage(long chatId, String text) {
-        SendMessage message = new SendMessage()
-                .setChatId(chatId)
+        SendMessage message = new SendMessage();
+        message.enableMarkdown(true);
+        message.setReplyMarkup(getSettingsKeyboard());
+        message.setChatId(chatId)
                 .setText(text);
         try {
             execute(message);
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
+    }
+
+    private ReplyKeyboardMarkup getSettingsKeyboard() {
+        ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
+        replyKeyboardMarkup.setSelective(true);
+        replyKeyboardMarkup.setResizeKeyboard(true);
+        replyKeyboardMarkup.setOneTimeKeyboard(false);
+
+        List<KeyboardRow> keyboard = new ArrayList<>();
+        KeyboardRow keyboardFirstRow = new KeyboardRow();
+
+        keyboardFirstRow.add(0, button1);
+        keyboardFirstRow.add(1, button2);
+        keyboardFirstRow.add(2, button3);
+        keyboard.add(keyboardFirstRow);
+        replyKeyboardMarkup.setKeyboard(keyboard);
+
+        return replyKeyboardMarkup;
     }
 }
