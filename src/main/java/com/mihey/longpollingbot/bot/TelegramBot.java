@@ -18,6 +18,8 @@ public class TelegramBot extends TelegramLongPollingBot {
     private String botUsername;
     @Value("${bot.token}")
     private String botToken;
+    @Value("${bot.command}")
+    private String command;
 
     @Override
     public void onUpdateReceived(Update update) {
@@ -47,7 +49,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         StringBuilder output = new StringBuilder();
 
         try {
-            Process process = Runtime.getRuntime().exec("");
+            Process process = Runtime.getRuntime().exec(command);
 
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             String line;
