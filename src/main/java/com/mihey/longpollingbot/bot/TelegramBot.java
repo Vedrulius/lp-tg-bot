@@ -33,10 +33,12 @@ public class TelegramBot extends TelegramLongPollingBot {
     private String button2;
     @Value("${bot.button3}")
     private String button3;
+    @Value("${bot.id}")
+    private int id;
 
     @Override
     public void onUpdateReceived(Update update) {
-        if (!(update.getMessage().getFrom().getId() == 425652971)) return;
+        if (!(update.getMessage().getFrom().getId() == id)) return;
         String message = getMessage();
         long chat_id = update.getMessage().getChatId();
         if (update.getMessage() != null && update.getMessage().hasText() &&
