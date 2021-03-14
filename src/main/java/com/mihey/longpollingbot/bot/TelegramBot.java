@@ -1,20 +1,14 @@
 package com.mihey.longpollingbot.bot;
 
+import com.mihey.longpollingbot.keyboard.Keyboard;
+import com.mihey.longpollingbot.service.MessageService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
 
 @Component
 public class TelegramBot extends TelegramLongPollingBot {
@@ -23,23 +17,25 @@ public class TelegramBot extends TelegramLongPollingBot {
     private String botUsername;
     @Value("${bot.token}")
     private String botToken;
+    @Value("${bot.id}")
+    private int id;
     @Value("${bot.command}")
     private String command;
     @Value("${bot.commandName}")
     private String commandName;
-    @Value("${bot.button1}")
-    private String button1;
-    @Value("${bot.button2}")
-    private String button2;
-    @Value("${bot.button3}")
-    private String button3;
-    @Value("${bot.id}")
-    private int id;
+    private final Keyboard keyboard;
+    private final MessageService messageService;
+
+    @Autowired
+    public TelegramBot(Keyboard keyboard,MessageService messageService) {
+        this.keyboard = keyboard;
+        this.messageService=messageService;
+    }
 
     @Override
     public void onUpdateReceived(Update update) {
         if (!(update.getMessage().getFrom().getId() == id)) return;
-        String message = getMessage();
+        String message = messageService.getMessage();
         long chat_id = update.getMessage().getChatId();
         if (update.getMessage() != null && update.getMessage().hasText() &&
                 update.getMessage().getText().equals(commandName)) {
@@ -59,28 +55,10 @@ public class TelegramBot extends TelegramLongPollingBot {
         return botToken;
     }
 
-
-    private String getMessage() {
-        StringBuilder output = new StringBuilder();
-
-        try {
-            Process process = Runtime.getRuntime().exec(command);
-
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            String line;
-            while ((line = reader.readLine()) != null) {
-                output.append(line + "\n");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return output.toString();
-    }
-
     private void sendMessage(long chatId, String text) {
         SendMessage message = new SendMessage();
         message.enableMarkdown(false);
-        message.setReplyMarkup(getSettingsKeyboard());
+        message.setReplyMarkup(keyboard.getSettingsKeyboard());
         message.setChatId(chatId)
                 .setText(text);
         try {
@@ -88,23 +66,5 @@ public class TelegramBot extends TelegramLongPollingBot {
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
-    }
-
-    private ReplyKeyboardMarkup getSettingsKeyboard() {
-        ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
-        replyKeyboardMarkup.setSelective(true);
-        replyKeyboardMarkup.setResizeKeyboard(true);
-        replyKeyboardMarkup.setOneTimeKeyboard(false);
-
-        List<KeyboardRow> keyboard = new ArrayList<>();
-        KeyboardRow keyboardFirstRow = new KeyboardRow();
-
-        keyboardFirstRow.add(button1);
-        keyboardFirstRow.add(button2);
-        keyboardFirstRow.add(button3);
-        keyboard.add(keyboardFirstRow);
-        replyKeyboardMarkup.setKeyboard(keyboard);
-
-        return replyKeyboardMarkup;
     }
 }
