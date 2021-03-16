@@ -19,8 +19,6 @@ public class TelegramBot extends TelegramLongPollingBot {
     private String botToken;
     @Value("${bot.id}")
     private int id;
-    @Value("${bot.command}")
-    private String command;
     @Value("${bot.commandName}")
     private String commandName;
     private final Keyboard keyboard;
