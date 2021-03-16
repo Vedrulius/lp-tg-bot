@@ -10,15 +10,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-@PropertySource("button.properties")
+@PropertySource("bot.properties")
 public class Keyboard {
 
     @Value("${bot.button1}")
     private String button1;
     @Value("${bot.button2}")
     private String button2;
-    @Value("${bot.button3}")
-    private String button3;
 
     public ReplyKeyboardMarkup getSettingsKeyboard() {
         ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
@@ -31,7 +29,6 @@ public class Keyboard {
 
         keyboardFirstRow.add(button1);
         keyboardFirstRow.add(button2);
-        keyboardFirstRow.add(button3);
         keyboard.add(keyboardFirstRow);
         replyKeyboardMarkup.setKeyboard(keyboard);
 

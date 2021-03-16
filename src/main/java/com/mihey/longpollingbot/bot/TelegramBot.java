@@ -19,28 +19,26 @@ public class TelegramBot extends TelegramLongPollingBot {
     private String botToken;
     @Value("${bot.id}")
     private int id;
-    @Value("${bot.commandName}")
-    private String commandName;
+
     private final Keyboard keyboard;
     private final MessageService messageService;
 
     @Autowired
-    public TelegramBot(Keyboard keyboard,MessageService messageService) {
+    public TelegramBot(Keyboard keyboard, MessageService messageService) {
         this.keyboard = keyboard;
-        this.messageService=messageService;
+        this.messageService = messageService;
     }
 
     @Override
     public void onUpdateReceived(Update update) {
-        if (!(update.getMessage().getFrom().getId() == id)) return;
-        String message = messageService.getMessage();
-        long chat_id = update.getMessage().getChatId();
-        if (update.getMessage() != null && update.getMessage().hasText() &&
-                update.getMessage().getText().equals(commandName)) {
-            sendMessage(chat_id, message);
-        } else {
-            sendMessage(chat_id, "wrong command!");
+        if (!(update.getMessage().getFrom().getId() == id) ||
+                update.getMessage() == null ||
+                !(update.getMessage().hasText())) {
+            return;
         }
+        long chat_id = update.getMessage().getChatId();
+        String message = update.getMessage().getText();
+        sendMessage(chat_id, messageService.getMessage(message));
     }
 
     @Override
