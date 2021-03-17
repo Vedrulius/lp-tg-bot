@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -15,16 +15,16 @@ import java.util.Map;
 public class MessageService {
 
     @Value("#{${bot.commands}}")
-    Map<String, String> map;
+    Map<String, List<String>> map;
 
     public String getMessage(String message) {
-
         if (!map.containsKey(message)) {
             return "Invalid command!";
         }
+
         StringBuilder output = new StringBuilder();
         try {
-            Process process = Runtime.getRuntime().exec(map.get(message));
+            Process process = Runtime.getRuntime().exec(map.get(message).toArray(new String[0]));
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             String line;
             while ((line = reader.readLine()) != null) {

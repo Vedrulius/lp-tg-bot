@@ -17,6 +17,10 @@ public class Keyboard {
     private String button1;
     @Value("${bot.button2}")
     private String button2;
+    @Value("${bot.button3}")
+    private String button3;
+    @Value("${bot.button4}")
+    private String button4;
 
     public ReplyKeyboardMarkup getSettingsKeyboard() {
         ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
@@ -26,10 +30,14 @@ public class Keyboard {
 
         List<KeyboardRow> keyboard = new ArrayList<>();
         KeyboardRow keyboardFirstRow = new KeyboardRow();
+        KeyboardRow keyboardFSecondRow = new KeyboardRow();
 
         keyboardFirstRow.add(button1);
         keyboardFirstRow.add(button2);
+        keyboardFSecondRow.add(button3);
+        keyboardFSecondRow.add(button4);
         keyboard.add(keyboardFirstRow);
+        keyboard.add(keyboardFSecondRow);
         replyKeyboardMarkup.setKeyboard(keyboard);
 
         return replyKeyboardMarkup;
