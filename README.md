@@ -13,9 +13,10 @@ For now you need to install jre and maven:
     sudo apt install maven
     sudo apt install git
 
-You can check version
-java -version
-mvn -v
+You can check version:
+
+    java -version
+    mvn -v
 
 create directory /bot or whatever you like. 
 cd bot
