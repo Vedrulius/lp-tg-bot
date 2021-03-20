@@ -27,11 +27,12 @@ You can check version:
         cd $HOME/<bot directory>    
         git clone https://github.com/Vedrulius/lp-tg-bot  
 
-5. Go to $HOME/<bot directory>/src/main/resources/ and change file application.properties:
+5. Go to $HOME/< bot directory >/src/main/resources/ and change file application.properties:
    
         bot.name=<your telegram bot name>
         bot.token=<Api Token>
         bot.id=<your telegram id>, if you don't know your id - google how to get it.
 
-6. Go to $HOME/< bot directory > and run: mvn install -DskipTests
+6. Go to $HOME/< bot directory > and run: mvn clean install -DskipTests
 7. Go to $HOME/< bot directory >/target and run: java -jar tgbot.jar
+
